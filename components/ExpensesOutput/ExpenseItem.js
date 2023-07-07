@@ -1,19 +1,30 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { GlobalStyles } from '../../constants/styles';
+import { getFormmatedDate } from '../../util/date';
 
 const ExpenseItem = ({ description, amount, date }) => {
+  const navigation = useNavigation();
+  //use useNavigation when navigating to a non-screen item
+  const expensePressHandler = () => {
+    navigation.navigate('ManageExpense');
+  };
+
   return (
-    <Pressable>
+    <Pressable
+      onPress={expensePressHandler}
+      style={({ pressed }) => pressed && styles.pressed}
+    >
       <View style={styles.expenseItem}>
         <View>
           <Text style={[styles.textBase, styles.description]}>
             {description}
           </Text>
-          <Text style={styles.textBase}>{date.toString()}</Text>
+          <Text style={styles.textBase}>{getFormmatedDate(date)}</Text>
         </View>
         <View style={styles.amountContainer}>
-          <Text style={styles.amount}>{amount}</Text>
+          <Text style={styles.amount}>{amount.toFixed(2)}</Text>
         </View>
       </View>
     </Pressable>
@@ -23,6 +34,9 @@ const ExpenseItem = ({ description, amount, date }) => {
 export default ExpenseItem;
 
 const styles = StyleSheet.create({
+  pressed: {
+    opacity: 0.75
+  },
   expenseItem: {
     padding: 12,
     marginVertical: 8,
@@ -30,7 +44,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     borderRadius: 6,
+    // for android
     elevation: 3,
+    // for iOS
     shadowColor: GlobalStyles.colors.gray500,
     shadowRadius: 4,
     shadowOffset: { width: 1, height: 1 },
@@ -50,7 +66,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 4
+    borderRadius: 4,
+    minWidth: 80
   },
   amount: {
     color: GlobalStyles.colors.primary500,
